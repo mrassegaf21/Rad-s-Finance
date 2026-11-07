@@ -18,9 +18,9 @@
                 </div>
                 <div>
                     <h1 class="text-xl font-bold tracking-tight text-white flex items-center gap-2">
-                        AI Financial Assistant <span class="text-xs bg-indigo-500/20 text-indigo-300 border border-indigo-500/30 px-2 py-0.5 rounded-full font-medium">Agent v3.2</span>
+                        Rad's Finance <span class="text-xs bg-indigo-500/20 text-indigo-300 border border-indigo-500/30 px-2 py-0.5 rounded-full font-medium">Agent v4.0</span>
                     </h1>
-                    <p class="text-xs text-slate-400">Utility-Based Autonomous Financial Management Agent</p>
+                    <p class="text-xs text-slate-400">Utility-Based & Conversational Financial Expert Agent</p>
                 </div>
             </div>
             <div class="flex items-center gap-3">
@@ -79,16 +79,47 @@
                 <div class="w-8 h-8 rounded-lg bg-indigo-500/20 flex items-center justify-center text-indigo-400 text-sm">
                     <i class="fa-solid fa-brain"></i>
                 </div>
-                <h3 class="text-sm font-bold uppercase tracking-wider text-indigo-300">Analisis & Rekomendasi AI Agent</h3>
+                <h3 class="text-sm font-bold uppercase tracking-wider text-indigo-300">Analisis Otomatis AI Agent</h3>
             </div>
             <p id="aiAdviceText" class="text-sm text-slate-300 leading-relaxed bg-slate-950/50 p-4 rounded-xl border border-indigo-500/20">
                 Memuat analisis agen cerdas...
             </p>
         </div>
 
+        <!-- FITUR BARU: AI CHAT CONSULTANT (TANYA JAWAB KEUANGAN) -->
+        <div class="bg-slate-900/90 border border-slate-800 p-6 rounded-2xl shadow-xl mb-6">
+            <div class="flex items-center gap-3 mb-4">
+                <div class="w-8 h-8 rounded-lg bg-emerald-500/20 flex items-center justify-center text-emerald-400 text-sm">
+                    <i class="fa-solid fa-comments"></i>
+                </div>
+                <div>
+                    <h3 class="text-sm font-bold uppercase tracking-wider text-white">Konsultasi Keuangan dengan AI</h3>
+                    <p class="text-xs text-slate-400">Tanyakan apa saja, contoh: "Bagaimana cara hidup hemat?", "Tips atur uang anak kos", dll.</p>
+                </div>
+            </div>
+            
+            <!-- Chat Box Area -->
+            <div id="chatHistory" class="bg-slate-950 border border-slate-800 rounded-xl p-4 h-48 overflow-y-auto mb-4 space-y-3 text-sm">
+                <div class="flex gap-3">
+                    <div class="w-7 h-7 rounded-full bg-indigo-600 flex items-center justify-center text-white text-xs shrink-0"><i class="fa-solid fa-robot"></i></div>
+                    <div class="bg-slate-900 border border-slate-800 p-3 rounded-2xl text-slate-200 text-xs leading-relaxed max-w-[85%]">
+                        Halo! Saya AI Financial Expert. Kamu bisa bertanya soal tips keuangan, cara hidup hemat, atau strategi menabung di sini! Silakan ketik pertanyaanmu di bawah. 👇
+                    </div>
+                </div>
+            </div>
+
+            <!-- Chat Input Form -->
+            <form onsubmit="askAIConsultant(event)" class="flex gap-2">
+                <input type="text" id="chatInput" placeholder="Ketik pertanyaan keuanganmu di sini..." required class="flex-1 bg-slate-950 border border-slate-800 rounded-xl px-4 py-2.5 text-sm text-white focus:outline-none focus:border-indigo-500 transition">
+                <button type="submit" class="bg-indigo-600 hover:bg-indigo-500 text-white px-5 py-2.5 rounded-xl text-sm font-medium transition cursor-pointer flex items-center gap-2">
+                    <i class="fa-solid fa-paper-plane"></i> Kirim
+                </button>
+            </form>
+        </div>
+
         <!-- FORM & TABLE GRID -->
         <div class="grid grid-cols-1 lg:grid-cols-3 gap-6">
-            <!-- INPUT FORM -->
+            <!-- INPUT FORM TRANSAKSI -->
             <div class="bg-slate-900/90 border border-slate-800 p-6 rounded-2xl shadow-lg h-fit">
                 <h3 class="text-sm font-bold uppercase tracking-wider text-white mb-4 flex items-center gap-2">
                     <i class="fa-solid fa-circle-plus text-indigo-400"></i> Catat Transaksi Baru
@@ -121,7 +152,7 @@
                         <input type="text" id="noteInput" placeholder="Contoh: Uang saku / Makan siang" class="w-full bg-slate-950 border border-slate-800 rounded-xl px-4 py-2.5 text-sm text-white focus:outline-none focus:border-indigo-500 transition">
                     </div>
                     <button type="submit" class="w-full bg-indigo-600 hover:bg-indigo-500 text-white font-medium text-sm py-3 rounded-xl transition shadow-lg shadow-indigo-600/20 cursor-pointer flex items-center justify-center gap-2">
-                        <i class="fa-solid fa-paper-plane"></i> Simpan Transaksi
+                        <i class="fa-solid fa-floppy-disk"></i> Simpan Transaksi
                     </button>
                 </form>
             </div>
@@ -176,7 +207,6 @@
             let totalIncome = transactions.filter(t => t.type === 'pemasukan').reduce((sum, t) => sum + t.amount, 0);
             let totalSpent = transactions.filter(t => t.type === 'pengeluaran').reduce((sum, t) => sum + t.amount, 0);
             
-            // LOGIKA SISA SALDO REAL: Budget + Pemasukan - Pengeluaran
             let realBalance = (monthlyBudget + totalIncome) - totalSpent;
             let percentage = monthlyBudget > 0 ? (totalSpent / (monthlyBudget + totalIncome)) * 100 : 0;
 
@@ -238,7 +268,6 @@
                 });
             }
             document.getElementById('transactionCount').innerText = `${transactions.length} item`;
-
             generateAIAdvice(totalSpent, totalIncome, percentage, realBalance);
         }
 
@@ -264,6 +293,58 @@
             } else {
                 adviceBox.innerHTML = `✅ <strong class="text-emerald-400">Keuangan Sangat Sehat:</strong> Sisa saldomu saat ini ${formatRupiah(realBalance)}. Total pemasukan dan pengeluaran masih teralokasi dengan sangat baik!`;
             }
+        }
+
+        // --- SISTEM RULE-BASED AI CHAT (TANYA JAWAB KEUANGAN) ---
+        function askAIConsultant(event) {
+            event.preventDefault();
+            let inputField = document.getElementById('chatInput');
+            let question = inputField.value.trim();
+            if (!question) return;
+
+            let chatHistory = document.getElementById('chatHistory');
+
+            // 1. Tampilkan pertanyaan user di chat box
+            chatHistory.innerHTML += `
+                <div class="flex gap-3 justify-end">
+                    <div class="bg-indigo-600/30 border border-indigo-500/30 p-3 rounded-2xl text-slate-100 text-xs leading-relaxed max-w-[85%]">
+                        ${question}
+                    </div>
+                    <div class="w-7 h-7 rounded-full bg-slate-800 flex items-center justify-center text-indigo-400 text-xs shrink-0"><i class="fa-solid fa-user"></i></div>
+                </div>
+            `;
+
+            inputField.value = '';
+            chatHistory.scrollTop = chatHistory.scrollHeight;
+
+            // 2. Proses jawaban AI berdasarkan kata kunci (Rule-Based NLP Agent)
+            setTimeout(() => {
+                let lowerQ = question.toLowerCase();
+                let aiReply = "";
+
+                if (lowerQ.includes("hemat") || lowerQ.includes("irit") || lowerQ.includes("tips")) {
+                    aiReply = "💡 <strong>Tips Hidup Hemat ala AI Agent:</strong><br>1. Terapkan metode 50/30/20 (50% kebutuhan pokok, 30% keinginan, 20% tabungan).<br>2. Batasi beli makanan di luar dan utamakan masak sendiri.<br>3. Selalu catat setiap pengeluaran sekecil apa pun di aplikasi ini!";
+                } else if (lowerQ.includes("boros") || lowerQ.includes("habis")) {
+                    aiReply = "⚠️ <strong>Solusi Mengatasi Boros:</strong><br>Evaluasi menu 'Riwayat Transaksi' di bawah untuk melihat kategori mana yang paling banyak menyedot uangmu. Blokir sementara pengeluaran untuk kategori *Hiburan* atau *Belanja* non-esensial sampai akhir bulan.";
+                } else if (lowerQ.includes("tabung") || lowerQ.includes("investasi") || lowerQ.includes("darurat")) {
+                    aiReply = "💰 <strong>Strategi Menabung & Dana Darurat:</strong><br>Sisihkan minimal 10% sampai 20% dari total pemasukan *di awal* saat uang masuk, bukan menyisihkan sisa di akhir bulan. Simpan dana darurat minimal 3x pengeluaran bulanan.";
+                } else if (lowerQ.includes("halo") || lowerQ.includes("hai") || lowerQ.includes("pagi")) {
+                    aiReply = "Halo juga! Ada hal seputar keuangan atau manajemen budget yang ingin kamu diskusikan?";
+                } else {
+                    aiReply = "🤖 Pertanyaan yang bagus! Sebagai agen keuangan, saran utama saya adalah selalu pantau target budget dan pos pengeluaran terbesarmu agar tidak terjadi defisit. Ada hal spesifik lain tentang keuangan yang ingin kamu tanyakan?";
+                }
+
+                // Tampilkan jawaban AI
+                chatHistory.innerHTML += `
+                    <div class="flex gap-3">
+                        <div class="w-7 h-7 rounded-full bg-indigo-600 flex items-center justify-center text-white text-xs shrink-0"><i class="fa-solid fa-robot"></i></div>
+                        <div class="bg-slate-900 border border-slate-800 p-3 rounded-2xl text-slate-200 text-xs leading-relaxed max-w-[85%]">
+                            ${aiReply}
+                        </div>
+                    </div>
+                `;
+                chatHistory.scrollTop = chatHistory.scrollHeight;
+            }, 500);
         }
 
         function addTransaction(event) {
